@@ -1,8 +1,7 @@
 
-import java.sql.DriverManager;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
 
@@ -31,22 +30,15 @@ public class Main {
 
         String insertUser1 = "INSERT INTO USERS (ID,NAME,SURNAME) VALUES (1, 'John', 'Dow');";
         String insertUser2 = "INSERT INTO USERS (ID,NAME,SURNAME) VALUES (2, 'Peter', 'Smith');";
+        String getAllUsers = "SELECT * FROM USERS;";
+
 
         try {
             dbConnection = getDBConnection();
             statement = dbConnection.createStatement();
 
-            // execute the SQL statement
-            statement.execute(createUserTable);
-
-            System.out.println("Table USERS was created!");
-
-            statement.execute(insertUser1);
-            statement.execute(insertUser2);
-
-            System.out.println("Users were inserted");
-
-
+            createTable(statement, createUserTable, insertUser1, insertUser2);
+            retrieveData(statement, getAllUsers);
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -59,6 +51,30 @@ public class Main {
                 dbConnection.close();
             }
         }
+    }
+
+    private static void retrieveData(Statement statement, String getAllUsers) throws SQLException {
+        ResultSet resultSet = statement.executeQuery(getAllUsers);
+        List<User> userList = new ArrayList<>();
+        while(resultSet.next()){
+            userList.add(new User(resultSet.getString("name"), resultSet.getString("surname")));
+
+        }
+        for(User user : userList){
+            System.out.println(user);
+        }
+    }
+
+    private static void createTable(Statement statement, String createUserTable, String insertUser1, String insertUser2) throws SQLException {
+        // execute the SQL statement
+        statement.execute(createUserTable);
+
+        System.out.println("Table USERS was created!");
+
+        statement.execute(insertUser1);
+        statement.execute(insertUser2);
+
+        System.out.println("Users were inserted");
     }
 
     private static Connection getDBConnection() {
