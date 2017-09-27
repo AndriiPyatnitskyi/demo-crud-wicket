@@ -36,7 +36,7 @@ public class Main {
             dbConnection = getDBConnection();
             statement = dbConnection.createStatement();
 
-            // execute the SQL stetement
+            // execute the SQL statement
             statement.execute(createUserTable);
 
             System.out.println("Table USERS was created!");
